@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Whale Optimization Algorithm (WOA) & RAG Simulator | Team 6 FCAI</title>
+    <meta name="description" content="Interactive Simulation of Whale Optimization Algorithm (WOA) and Automated Hyperparameter Tuning for Advanced RAG Pipelines.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <!-- Background Ambient Lighting -->
+    <div class="ambient-glow glow-1"></div>
+    <div class="ambient-glow glow-2"></div>
+    <div class="ambient-glow glow-3"></div>
+
+    <!-- Main Navigation Bar -->
+    <header class="app-header">
+        <div class="brand">
+            <div class="brand-icon">🐋</div>
+            <div class="brand-text">
+                <h1>WOA &bull; RAG Simulator</h1>
+                <span class="sub-brand">Metaheuristic Swarm Optimization &bull; Team 6 FCAI</span>
+            </div>
+        </div>
+
+        <nav class="nav-tabs" role="tablist">
+            <button class="nav-tab active" data-tab="tab-swarm" id="tab-btn-swarm">
+                <span class="tab-icon">🌊</span> Swarm Simulation
+            </button>
+            <button class="nav-tab" data-tab="tab-rag" id="tab-btn-rag">
+                <span class="tab-icon">🤖</span> RAG Auto-Tuner
+            </button>
+            <button class="nav-tab" data-tab="tab-benchmark" id="tab-btn-benchmark">
+                <span class="tab-icon">📊</span> 5-Algorithm Benchmark
+            </button>
+            <button class="nav-tab" data-tab="tab-exam" id="tab-btn-exam">
+                <span class="tab-icon">📝</span> Exam Solver
+            </button>
+            <button class="nav-tab" data-tab="tab-about" id="tab-btn-about">
+                <span class="tab-icon">📖</span> Theory & Team
+            </button>
+        </nav>
+
+        <div class="server-status">
+            <span class="status-dot"></span>
+            <span class="status-label">Render Online</span>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="app-container">
+
+        <!-- ============================================================== -->
+        <!-- TAB 1: 2D SWARM VISUAL SIMULATION                              -->
+        <!-- ============================================================== -->
+        <section id="tab-swarm" class="tab-content active">
+            <div class="simulation-layout">
+                <!-- Left Control Panel -->
+                <aside class="panel glass-card control-panel">
+                    <h2 class="panel-title">⚙️ Swarm Parameters</h2>
+
+                    <div class="form-group">
+                        <label for="sim-function">Objective Function</label>
+                        <select id="sim-function" class="input-select">
+                            <option value="sphere">Sphere Function (Unimodal Bowl)</option>
+                            <option value="rastrigin">Rastrigin Function (Multimodal Traps)</option>
+                            <option value="ackley">Ackley Function (Steep Basin)</option>
+                            <option value="rosenbrock">Rosenbrock Function (Curved Valley)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="label-row">
+                            <label for="sim-pop">Whale Pod Size (N)</label>
+                            <span id="sim-pop-val" class="slider-val">25</span>
+                        </div>
+                        <input type="range" id="sim-pop" min="10" max="60" value="25" class="slider">
+                    </div>
+
+                    <div class="form-group">
+                        <div class="label-row">
+                            <label for="sim-epochs">Max Epochs (T<sub>max</sub>)</label>
+                            <span id="sim-epochs-val" class="slider-val">35</span>
+                        </div>
+                        <input type="range" id="sim-epochs" min="15" max="70" value="35" class="slider">
+                    </div>
+
+                    <div class="form-group">
+                        <div class="label-row">
+                            <label for="sim-speed">Animation Speed</label>
+                            <span id="sim-speed-val" class="slider-val">1.0x</span>
+                        </div>
+                        <input type="range" id="sim-speed" min="0.2" max="3.0" step="0.2" value="1.0" class="slider">
+                    </div>
+
+                    <div class="btn-group">
+                        <button id="btn-sim-run" class="btn btn-primary">
+                            <span class="btn-icon">▶</span> Run Simulation
+                        </button>
+                        <button id="btn-sim-pause" class="btn btn-secondary" disabled>
+                            <span class="btn-icon">⏸</span> Pause
+                        </button>
+                    </div>
+
+                    <div class="legend-box">
+                        <div class="legend-title">Visual Legend</div>
+                        <div class="legend-item"><span class="dot dot-whale"></span> Whales (Search Agents)</div>
+                        <div class="legend-item"><span class="dot dot-leader"></span> Best Leader (X*)</div>
+                        <div class="legend-item"><span class="line line-spiral"></span> Spiral Bubble-Net Path</div>
+                        <div class="legend-item"><span class="line line-explore"></span> Global Divergence Path</div>
+                    </div>
+                </aside>
+
+                <!-- Center Canvas Area -->
+                <div class="canvas-wrapper glass-card">
+                    <div class="canvas-header">
+                        <div class="canvas-status">
+                            <span id="canvas-epoch-badge" class="badge">Epoch: 0 / 35</span>
+                            <span id="canvas-phase-badge" class="badge badge-purple">Idle</span>
+                        </div>
+                        <div class="canvas-controls">
+                            <button id="btn-sim-step" class="btn-sm" title="Step one epoch">Next Step ⏭</button>
+                            <button id="btn-sim-reset" class="btn-sm" title="Reset canvas">Reset 🔄</button>
+                        </div>
+                    </div>
+
+                    <div class="canvas-viewport">
+                        <canvas id="swarm-canvas" width="800" height="600"></canvas>
+                    </div>
+                </div>
+
+                <!-- Right Telemetry Panel -->
+                <aside class="panel glass-card telemetry-panel">
+                    <h2 class="panel-title">📡 Live Swarm Telemetry</h2>
+
+                    <div class="telemetry-card">
+                        <div class="telemetry-label">Linear Decay Parameter (a)</div>
+                        <div class="telemetry-value-row">
+                            <span id="telemetry-a" class="metric-num">2.000</span>
+                            <span class="metric-sub">Range: 2.0 &rarr; 0.0</span>
+                        </div>
+                        <div class="progress-bar-bg">
+                            <div id="bar-a" class="progress-bar-fill" style="width: 100%;"></div>
+                        </div>
+                    </div>
+
+                    <div class="telemetry-card">
+                        <div class="telemetry-label">Exploration Decider (|A|)</div>
+                        <div class="telemetry-value-row">
+                            <span id="telemetry-A" class="metric-num">1.000</span>
+                            <span id="telemetry-A-status" class="metric-sub text-cyan">Exploration (|A| &ge; 1)</span>
+                        </div>
+                        <div class="progress-bar-bg">
+                            <div id="bar-A" class="progress-bar-fill fill-cyan" style="width: 50%;"></div>
+                        </div>
+                    </div>
+
+                    <div class="telemetry-card">
+                        <div class="telemetry-label">Dual Hunting Probability (p)</div>
+                        <div class="telemetry-value-row">
+                            <span id="telemetry-p" class="metric-num">0.000</span>
+                            <span id="telemetry-p-status" class="metric-sub">50/50 Decision</span>
+                        </div>
+                        <div class="progress-bar-bg">
+                            <div id="bar-p" class="progress-bar-fill fill-purple" style="width: 0%;"></div>
+                        </div>
+                    </div>
+
+                    <div class="telemetry-card">
+                        <div class="telemetry-label">Current Best Fitness f(X*)</div>
+                        <div id="telemetry-fitness" class="metric-num-lg text-emerald">0.000000</div>
+                        <div id="telemetry-coords" class="metric-sub">Coordinates: (0.00, 0.00)</div>
+                    </div>
+                </aside>
+            </div>
+        </section>
+
+        <!-- ============================================================== -->
+        <!-- TAB 2: RAG HYPERPARAMETER AUTO-TUNER                           -->
+        <!-- ============================================================== -->
+        <section id="tab-rag" class="tab-content">
+            <div class="rag-layout">
+                <!-- RAG Tuning Controls -->
+                <div class="panel glass-card rag-setup-panel">
+                    <h2 class="panel-title">🎯 5D RAG Hyperparameter Tuning Engine</h2>
+                    <p class="panel-desc">
+                        Tunes the 5 combinatorial knobs of Retrieval-Augmented Generation to minimize context hallucination, maximize retrieval precision, and control latency.
+                    </p>
+
+                    <div class="rag-slider-grid">
+                        <div class="form-group">
+                            <div class="label-row">
+                                <label>Chunk Size (x₀)</label>
+                                <span id="rag-val-chunk" class="slider-val">512 tokens</span>
+                            </div>
+                            <input type="range" id="rag-slider-chunk" min="128" max="1024" step="32" value="512" class="slider">
+                            <span class="hint">Discretized step = 32 tokens</span>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="label-row">
+                                <label>Chunk Overlap (x₁)</label>
+                                <span id="rag-val-overlap" class="slider-val">64 tokens</span>
+                            </div>
+                            <input type="range" id="rag-slider-overlap" min="0" max="256" step="16" value="64" class="slider">
+                            <span class="hint">Physical constraint: Overlap &le; 40% Chunk</span>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="label-row">
+                                <label>Top-K Retrieved Documents (x₂)</label>
+                                <span id="rag-val-topk" class="slider-val">10</span>
+                            </div>
+                            <input type="range" id="rag-slider-topk" min="1" max="20" step="1" value="10" class="slider">
+                            <span class="hint">Integer range [1, 20]</span>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="label-row">
+                                <label>Hybrid Search Alpha (x₃)</label>
+                                <span id="rag-val-alpha" class="slider-val">0.50</span>
+                            </div>
+                            <input type="range" id="rag-slider-alpha" min="0" max="1" step="0.05" value="0.50" class="slider">
+                            <span class="hint">0.0 = BM25 sparse &bull; 1.0 = Dense vector</span>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="label-row">
+                                <label>Rerank Confidence Threshold (x₄)</label>
+                                <span id="rag-val-rerank" class="slider-val">0.25</span>
+                            </div>
+                            <input type="range" id="rag-slider-rerank" min="0" max="0.9" step="0.05" value="0.25" class="slider">
+                            <span class="hint">Cross-Encoder filter threshold [0.0, 0.90]</span>
+                        </div>
+                    </div>
+
+                    <div class="rag-action-row">
+                        <button id="btn-run-rag-opt" class="btn btn-primary btn-lg">
+                            <span class="btn-icon">⚡</span> Run WOA Optimization on RAG Pipeline
+                        </button>
+                        <div id="rag-opt-spinner" class="spinner hidden"></div>
+                    </div>
+                </div>
+
+                <!-- RAG Results & Radar Panel -->
+                <div class="rag-results-panel">
+                    <!-- Metrics Scorecard -->
+                    <div class="metric-card-grid">
+                        <div class="metric-card glass-card">
+                            <div class="card-icon">🎯</div>
+                            <div class="card-metric-title">Context Precision</div>
+                            <div id="metric-precision" class="card-metric-val text-cyan">--%</div>
+                            <div id="metric-prec-sub" class="card-metric-sub">Target: 100%</div>
+                        </div>
+
+                        <div class="metric-card glass-card">
+                            <div class="card-icon">📥</div>
+                            <div class="card-metric-title">Context Recall</div>
+                            <div id="metric-recall" class="card-metric-val text-emerald">--%</div>
+                            <div id="metric-rec-sub" class="card-metric-sub">Target: 100%</div>
+                        </div>
+
+                        <div class="metric-card glass-card">
+                            <div class="card-icon">⚖️</div>
+                            <div class="card-metric-title">Retrieval F1 Score</div>
+                            <div id="metric-f1" class="card-metric-val text-purple">--%</div>
+                            <div id="metric-f1-sub" class="card-metric-sub">Harmonic Mean</div>
+                        </div>
+
+                        <div class="metric-card glass-card">
+                            <div class="card-icon">📉</div>
+                            <div class="card-metric-title">Composite Loss</div>
+                            <div id="metric-loss" class="card-metric-val text-amber">--</div>
+                            <div id="metric-gain" class="card-metric-sub text-emerald">+0.0% Gain</div>
+                        </div>
+                    </div>
+
+                    <!-- Convergence Graph & Radar View -->
+                    <div class="charts-dual-row">
+                        <div class="chart-box glass-card">
+                            <h3 class="chart-title">Convergence Trajectory (Loss vs Epochs)</h3>
+                            <canvas id="rag-convergence-chart" width="450" height="240"></canvas>
+                        </div>
+                        <div class="chart-box glass-card">
+                            <h3 class="chart-title">Optimal RAG Hyperparameter Radar</h3>
+                            <canvas id="rag-radar-chart" width="450" height="240"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================== -->
+        <!-- TAB 3: 5-ALGORITHM COMPARATIVE BENCHMARK                       -->
+        <!-- ============================================================== -->
+        <section id="tab-benchmark" class="tab-content">
+            <div class="benchmark-container glass-card">
+                <div class="benchmark-header">
+                    <div>
+                        <h2 class="panel-title">📊 5-Algorithm Fair Benchmark Comparison</h2>
+                        <p class="panel-desc">All algorithms evaluated under the exact same computational budget (Pop &times; Iterations).</p>
+                    </div>
+                    <button id="btn-run-benchmark" class="btn btn-primary">
+                        <span class="btn-icon">⚡</span> Execute Full Benchmark
+                    </button>
+                </div>
+
+                <div id="benchmark-spinner" class="spinner-container hidden">
+                    <div class="spinner"></div>
+                    <p>Executing Grid Search, Random Search, GA, PSO, and WOA...</p>
+                </div>
+
+                <div class="benchmark-table-wrapper" id="benchmark-results-view">
+                    <table class="benchmark-table">
+                        <thead>
+                            <tr>
+                                <th>Algorithm</th>
+                                <th>Min Loss</th>
+                                <th>Precision</th>
+                                <th>Recall</th>
+                                <th>F1 Score</th>
+                                <th>Latency Penalty</th>
+                                <th>Gain vs Grid</th>
+                                <th>Runtime</th>
+                            </tr>
+                        </thead>
+                        <tbody id="benchmark-tbody">
+                            <!-- Populated dynamically via JS -->
+                            <tr><td colspan="8" class="text-center text-muted">Click "Execute Full Benchmark" to test all 5 algorithms live.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="benchmark-chart-box">
+                    <h3 class="chart-title">Comparative Loss vs Runtime</h3>
+                    <canvas id="benchmark-bar-chart" width="900" height="280"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================== -->
+        <!-- TAB 4: STEP-BY-STEP EXAM SOLVER                                -->
+        <!-- ============================================================== -->
+        <section id="tab-exam" class="tab-content">
+            <div class="exam-layout">
+                <aside class="exam-nav glass-card">
+                    <h2 class="panel-title">📝 Exam Problems</h2>
+                    <button class="exam-btn active" data-problem="1" id="exam-p1-btn">
+                        <strong>Problem 1</strong>
+                        <span>1D Encircling Step (|A| &lt; 1)</span>
+                    </button>
+                    <button class="exam-btn" data-problem="2" id="exam-p2-btn">
+                        <strong>Problem 2</strong>
+                        <span>2D Spiral Attack (p &ge; 0.5)</span>
+                    </button>
+                    <button class="exam-btn" data-problem="3" id="exam-p3-btn">
+                        <strong>Problem 3</strong>
+                        <span>Exploration Rule (|A| &ge; 1)</span>
+                    </button>
+                </aside>
+
+                <div class="exam-main glass-card" id="exam-details-container">
+                    <div class="exam-header-row">
+                        <h2 id="exam-title" class="exam-title">Problem 1: 1D Shrinking Encircling Step</h2>
+                        <button id="btn-recalc-exam" class="btn btn-secondary btn-sm">Re-Calculate 🔄</button>
+                    </div>
+
+                    <div id="exam-given-card" class="exam-given-box">
+                        <!-- Populated via JS -->
+                    </div>
+
+                    <div class="exam-steps-flow" id="exam-steps-container">
+                        <!-- Step cards populated via JS -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================================== -->
+        <!-- TAB 5: THEORY & TEAM INFO                                      -->
+        <!-- ============================================================== -->
+        <section id="tab-about" class="tab-content">
+            <div class="about-grid">
+                <div class="about-card glass-card">
+                    <h2 class="panel-title">👥 Team 6 &bull; FCAI</h2>
+                    <p class="panel-desc">Faculty of Computers & Artificial Intelligence &bull; Date: 09 / 11 / 2026</p>
+                    <ul class="team-list">
+                        <li>
+                            <span class="team-badge">1</span>
+                            <div>
+                                <strong>Omar Abdelhamid</strong>
+                                <span class="team-role">Algorithm Modeling & Pipeline Architecture</span>
+                            </div>
+                        </li>
+                        <li>
+                            <span class="team-badge">2</span>
+                            <div>
+                                <strong>Abdelmasih Ashraf</strong>
+                                <span class="team-role">Swarm Simulation & Mathematical Proofs</span>
+                            </div>
+                        </li>
+                        <li>
+                            <span class="team-badge">3</span>
+                            <div>
+                                <strong>Mohamed Maher</strong>
+                                <span class="team-role">RAG Evaluation & Multi-Objective Loss</span>
+                            </div>
+                        </li>
+                        <li>
+                            <span class="team-badge">4</span>
+                            <div>
+                                <strong>Hussein Mohamed</strong>
+                                <span class="team-role">Full-Stack Simulation & Deployment Engine</span>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="about-card glass-card">
+                    <h2 class="panel-title">📚 Official Academic References</h2>
+                    <ul class="ref-links-list">
+                        <li>
+                            <a href="https://doi.org/10.1016/j.advengsoft.2016.01.008" target="_blank" rel="noopener">
+                                <strong>1. Mirjalili & Lewis (2016)</strong>
+                                <span>The Whale Optimization Algorithm. Advances in Engineering Software.</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://arxiv.org/abs/2410.20878" target="_blank" rel="noopener">
+                                <strong>2. Kim et al. (AutoRAG, Oct 2024)</strong>
+                                <span>Automated Framework for Optimization of RAG Pipelines (arXiv:2410.20878).</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://arxiv.org/abs/2309.15217" target="_blank" rel="noopener">
+                                <strong>3. Es et al. (RAGAS, 2023)</strong>
+                                <span>Automated Evaluation of Retrieval Augmented Generation (arXiv:2309.15217).</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://arxiv.org/abs/2501.18950" target="_blank" rel="noopener">
+                                <strong>4. Kartal et al. (RAGSmith, Jan 2025)</strong>
+                                <span>A Framework for Holistic RAG Pipeline Optimization (arXiv:2501.18950).</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+        <span>Whale Optimization Algorithm &bull; Automated RAG Tuning Platform</span>
+        <span>Containerized with Docker &bull; Deployable to Render</span>
+    </footer>
+
+    <!-- Frontend Logic Script -->
+    <script src="/static/app.js"></script>
+</body>
+</html>
