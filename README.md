@@ -74,14 +74,14 @@
 
 ### الطريقة الثالثة: الرفع والنشر على منصة Render (Render Deployment)
 المشروع مهيأ بالكامل للنشر التلقائي على **Render**:
-1. أنشئ ريبو جديد على حسابك في GitHub (مثلاً: `woa-rag-simulation`).
+1. أنشئ ريبو جديد على حسابك في GitHub (مثلاً: `woa-metaheuristic-rag`).
 2. ارفع مجلد المشروع إليه (راجع قسم Git بالأسفل).
 3. في لوحة تحكم Render:
    - اضغط **New +** ثم اختر **Web Service**.
-   - اربط الريبو الخاص بك `woa-rag-simulation`.
+   - اربط الريبو الخاص بك `woa-metaheuristic-rag`.
    - سيتعرف Render تلقائياً على ملف `Dockerfile` وملف `render.yaml`.
    - اضغط **Create Web Service**.
-4. سيبدأ البناء تلقائياً وسيعطيك Render رابطاً عاماً سريعاً (مثال: `https://woa-rag-simulation.onrender.com`).
+4. سيبدأ البناء تلقائياً وسيعطيك Render رابطاً عاماً سريعاً (مثال: `https://woa-metaheuristic-rag.onrender.com`).
 
 ---
 
@@ -100,7 +100,7 @@ git commit -m "Initial commit: Whale Optimization Algorithm (WOA) & RAG Web Simu
 
 # 3. ربطه بمستودعك الجديد على GitHub ورفعه
 git branch -M main
-git remote add origin https://github.com/YOUR_USERNAME/woa-rag-simulation.git
+git remote add origin https://github.com/YOUR_USERNAME/woa-metaheuristic-rag.git
 git push -u origin main
 ```
 

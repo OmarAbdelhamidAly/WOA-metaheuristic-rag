@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: woa-rag-simulation
+    name: woa-metaheuristic-rag
     env: docker
     plan: free
     region: oregon

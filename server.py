@@ -116,7 +116,7 @@ async def health_check():
     """Render health-check endpoint."""
     return {
         "status": "healthy",
-        "service": "woa-rag-simulation",
+        "service": "woa-metaheuristic-rag",
         "timestamp": time.time(),
         "environment": "production" if os.environ.get("RENDER") else "development",
     }
